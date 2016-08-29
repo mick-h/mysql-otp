@@ -57,7 +57,7 @@ handshake(Username, Password, Database, TcpModule, Socket) ->
     {ok, ConfirmPacket, _SeqNum3} = recv_packet(TcpModule, Socket, SeqNum2),
     case parse_handshake_confirm(ConfirmPacket) of
         #ok{status = OkStatus} ->
-            OkStatus = Handshake#handshake.status,
+            OkStatus = 0,
             Handshake;
         Error ->
             Error
@@ -230,7 +230,6 @@ server_version_to_list(ServerVersion) ->
 build_handshake_response(Handshake, Username, Password, Database) ->
     %% We require these capabilities. Make sure the server handles them.
     CapabilityFlags0 = ?CLIENT_PROTOCOL_41 bor
-                       ?CLIENT_TRANSACTIONS bor
                        ?CLIENT_SECURE_CONNECTION,
     CapabilityFlags = case Database of
         undefined -> CapabilityFlags0;
@@ -976,7 +975,7 @@ hash_password(Password, Salt) ->
 hash_non_empty_password(Password, Salt) ->
     Salt1 = case Salt of
         <<SaltNoNul:20/binary-unit:8, 0>> -> SaltNoNul;
-        _ when size(Salt) == 20           -> Salt
+        _ when size(Salt) == 21           -> Salt
     end,
     %% Hash as described above.
     <<Hash1Num:160>> = Hash1 = crypto:hash(sha, Password),

@@ -203,7 +203,7 @@ query(Conn, Query) ->
          Params :: [term()],
          Result :: query_result().
 query(Conn, Query, Params) when is_list(Params) ->
-    query_call(Conn, {param_query, Query, Params});
+    query_call(Conn, {query, Query, infinity});
 query(Conn, Query, Timeout) when is_integer(Timeout); Timeout == infinity ->
     query_call(Conn, {query, Query, Timeout}).
 
